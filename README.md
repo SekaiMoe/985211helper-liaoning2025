@@ -16,10 +16,10 @@
 3. 本项目旨在消除您和他人之间的信息差，其志愿推荐填报功能只是对您所处的分数和位次给出相应的建议，**如果您将本项目志愿模拟填报的输出结果填入了辽宁招生考试之窗的正式志愿填报系统，填报后所导致的一切后果都将由您本人承担。**
 
 ## 如何编译
-- 1. 安装 CMake , GCC 编译器和 Ninja
-- 2.  克隆本项目
-- 3.  在 cpp 目录运行 `cmake . -GNinja && ninja install`
-- 4.  键入 `helper -s` 即可食用
+1. 安装 CMake , GCC 编译器和 Ninja
+2.  克隆本项目
+3.  在 cpp 目录运行 `cmake . -GNinja && ninja install`
+4.  键入 `helper -s` 即可食用
 
 ## 其他链接
 - [json 库](https://github.com/open-source-parsers/jsoncpp/)
