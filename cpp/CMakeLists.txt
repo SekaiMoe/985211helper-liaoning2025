@@ -62,7 +62,16 @@ endif()
 
 #add the executable
 set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
-add_executable(helper ${SOURCES})
+add_executable(helper   src/helper.cpp
+    src/index.cpp
+    src/json.cpp
+    src/search.cpp
+    src/signal.cpp
+    src/usage.cpp
+    src/version.cpp
+    src/data.cpp  # Explicitly adding data.cpp
+)
+
 add_custom_command(
         TARGET helper
         POST_BUILD

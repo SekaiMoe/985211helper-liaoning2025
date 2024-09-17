@@ -1,6 +1,5 @@
 #include <base.h>
-
-#include "version.h"
+#include <version.h>
 
 int main(int argc, char *argv[]) {
     projsignal::register_signal();

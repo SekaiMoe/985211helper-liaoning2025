@@ -1,20 +1,18 @@
 #include <base.h>
-#include <fstream>    // For ifstream
-#include <sstream>    // For std::ostringstream
 
 namespace start {
     void start() {
-        std::ifstream ifile("./metadata.json");
-        if(!ifile.is_open()){
-            std::cerr<<"文件打开错误";
-        }
-        std::ostringstream buf;
-        std::string filestr;
-        char ch;
-        while(buf && ifile.get(ch)){
-            buf.put(ch);
-        }
-        filestr = buf.str();
+        const char* filePath = "./metadata.json";
+        view::view(filePath);
+        // 用户输入大学和专业
+        std::string university, profession;
+        std::cout << "请输入大学名称: ";
+        std::getline(std::cin, university);
+        std::cout << "请输入专业名称: ";
+        std::getline(std::cin, profession);
+
+        // 执行精确搜索
+        search::search(university, profession);
         return;
     }
 }

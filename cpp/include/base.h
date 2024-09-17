@@ -2,14 +2,15 @@
 #define BASE_H
 
 #include <iostream>
+#include <fstream>
 #include <json/json.h>
 
 namespace projsignal {
     void register_signal(void);
 }
 
-namespace searchjson {
-    void searchjson(const char* filePath);
+namespace view {
+    void view(const char* filePath);
 }
 
 namespace version {
@@ -22,6 +23,10 @@ namespace usage {
 
 namespace start {
     void start();
+}
+
+namespace search {
+    void search(const std::string& university, const std::string& profession);
 }
 
 #endif
