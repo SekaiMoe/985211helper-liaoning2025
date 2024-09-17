@@ -1,4 +1,3 @@
-#include <json/json.h>
 #include <base.h>
 
 #include "version.h"
