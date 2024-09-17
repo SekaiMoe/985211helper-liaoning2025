@@ -17,6 +17,12 @@ add_compile_options("-std=c++17")
 add_compile_options("-pipe")
 add_compile_options("-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang")
 
+if(",${CMAKE_CURRENT_SOURCE_DIR}," STREQUAL ",${CMAKE_CURRENT_BINARY_DIR},")
+    # try to clean up (does not work)
+    #file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt")
+    message(FATAL_ERROR "ERROR: In-source builds are not allowed, please use an extra build dir.")
+endif()
+
 option(DEBUG_MODE "Enable debugging" ON)
 if (DEBUG_MODE)
     message(WARNING "Warning: debug mode is enabled.")
