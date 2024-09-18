@@ -46,3 +46,49 @@ Some specific examples may require other tools including:
   $ sudo apt-get install ninja-build
 
 
+#### In-Place Build
+
+In-place builds generate all temporary build files in the same directory structure
+as the source code. This means that all Makefiles and object files are interspersed
+with your normal code. To create an in-place build target run the cmake command
+in your root directory. For example:
+
+[source,bash]
+----
+$ cmake .
+----
+
+#### Out-of-Source Build
+
+Out-of-source builds allow you to create a single build folder that can be anywhere on
+your file system. All temporary build and object files are located in this directory keeping
+your source tree clean. To create an out-of-source build run the cmake command in
+the build folder and point it to the directory with your root CMakeLists.txt file.
+Using out-of-source builds if you want to recreate your cmake environment
+from scratch, you only need to delete your build directory and then rerun cmake.
+
+For example:
+
+[source,bash]
+----
+$ mkdir build
+
+$ cd build 
+
+$ cmake ..
+----
+
+# Building the Examples
+
+Below is sample output from building this example.
+
+[source,bash]
+----
+$ mkdir build
+
+$ cd build
+
+$ cmake ..
+
+$ make
+----
