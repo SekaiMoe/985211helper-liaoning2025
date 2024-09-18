@@ -21,7 +21,7 @@
 - [ ] 分数线对比
 - [ ] 各科目最低分数线对比
 - [ ] 志愿填报建议
-- [ ] 985,211院校标记
+- [x] 985,211院校标记
 
 ## 其他链接
 - [json 库](https://github.com/open-source-parsers/jsoncpp/)

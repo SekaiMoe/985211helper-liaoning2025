@@ -22,6 +22,8 @@ namespace search {
         return predictedScore;
     }
     void search(const std::string& university, const std::string& profession) {
+        bool is985 = false;
+        bool is211 = false;
         bool found = false;
 
         for (const auto& uni : universityData) {
@@ -30,6 +32,8 @@ namespace search {
             // 过滤年份在2022-2024之间
                 if (uni.year >= 2022 && uni.year <= 2024) {
                     found = true;
+                    is985 = uni.is985;
+                    is211 = uni.is211;
                     if (uni.score != "null" && !uni.score.empty()) {
                         int scoreInt = std::stoi(uni.score);  // 转换 score 为 int
 
@@ -62,10 +66,24 @@ namespace search {
                 // 预测 2025 年的分数线
                 double predictedScore = predictScore(2022, score2022, 2023, score2023, 2024, score2024, 2025);
                 std::cout << "Year2025 (仅供参考): " << predictedScore << std::endl;
+
             } else {
                 std::cout << "数据不足。" << std::endl;
                 exit(2);
             }
+
+            std::cout << "\n该学校是";
+            if (is985) {
+                std::cout << " 985 ";
+            }
+            if (is211) {
+                std::cout << " 211 ";
+            }
+            if (!is985 && !is211) {
+                std::cout << " 非 985/211 ";
+            }
+            std::cout << "大学。" << std::endl;
+
         } else {
             std::cout << "没有找到匹配的大学或专业。" << std::endl;
             exit(1);
