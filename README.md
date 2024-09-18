@@ -22,6 +22,7 @@
 - [ ] 各科目最低分数线对比
 - [ ] 志愿填报建议
 - [x] 985,211院校标记
+- [ ] 支持命令界面和土星界面运行
 
 ## 其他链接
 - [json 库](https://github.com/open-source-parsers/jsoncpp/)
