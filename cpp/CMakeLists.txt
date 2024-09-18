@@ -1,3 +1,9 @@
+if(",${CMAKE_CURRENT_SOURCE_DIR}," STREQUAL ",${CMAKE_CURRENT_BINARY_DIR},")
+    # try to clean up (does not work)
+    #file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt")
+    message(FATAL_ERROR "ERROR: In-source builds are not allowed, please use an extra build dir.")
+endif()
+
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
@@ -17,13 +23,22 @@ add_compile_options("-std=c++17")
 add_compile_options("-pipe")
 add_compile_options("-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang")
 
-if(",${CMAKE_CURRENT_SOURCE_DIR}," STREQUAL ",${CMAKE_CURRENT_BINARY_DIR},")
-    # try to clean up (does not work)
-    #file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt")
-    message(FATAL_ERROR "ERROR: In-source builds are not allowed, please use an extra build dir.")
-endif()
+execute_process(
+    COMMAND date "+%Y-%m-%d"
+    OUTPUT_VARIABLE CMAKE_CURRENT_DATE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
-option(DEBUG_MODE "Enable debugging" ON)
+execute_process(
+    COMMAND date "+%H:%M:%S"
+    OUTPUT_VARIABLE CMAKE_CURRENT_TIME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+add_definitions(-DBUILD_DATE="${CMAKE_CURRENT_DATE}")
+add_definitions(-DBUILD_TIME="${CMAKE_CURRENT_TIME}")
+
+option(DEBUG_MODE "Enable debugging" OFF)
 if (DEBUG_MODE)
     message(WARNING "Warning: debug mode is enabled.")
     set(CMAKE_BUILD_TYPE Debug)

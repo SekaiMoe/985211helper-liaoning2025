@@ -8,7 +8,7 @@ namespace view {
         std::ifstream file(filePath, std::ifstream::binary);
         if (!file.is_open()) {
             std::cerr << "无法打开文件: " << filePath << std::endl;
-            return;
+            exit(2);
         }
 
         // 解析 JSON 文件
@@ -18,7 +18,7 @@ namespace view {
 
         if (!Json::parseFromStream(readerBuilder, file, &jsonData, &errs)) {
             std::cerr << "解析 JSON 失败: " << errs << std::endl;
-            return;
+            exit(1);
         }
 
         // 遍历 JSON 数组

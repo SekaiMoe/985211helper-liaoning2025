@@ -5,6 +5,22 @@
 std::map<int, int> minScoresByYear;
 
 namespace search {
+    inline double predictScore(int year1, int score1, int year2, int score2, int year3, int score3, int predictYear) {
+        // 使用两两年份之间的分数变化计算斜率（delta score / delta year）
+        double slope1 = (double)(score2 - score1) / (year2 - year1);
+        double slope2 = (double)(score3 - score2) / (year3 - year2);
+
+        // 取平均斜率
+        double avgSlope = (slope1 + slope2) / 2.0;
+
+        // 使用线性回归公式 y = mx + b 预测分数
+        // b（截距） = score3 - slope * year3
+        double intercept = score3 - avgSlope * year3;
+
+        // 预测 2025 年的分数
+        double predictedScore = avgSlope * predictYear + intercept;
+        return predictedScore;
+    }
     void search(const std::string& university, const std::string& profession) {
         bool found = false;
 
@@ -37,8 +53,22 @@ namespace search {
                     std::cout << "No data" << std::endl;
                 }
             }
+
+            if (minScoresByYear.size() == 3) {
+                int score2022 = minScoresByYear[2022];
+                int score2023 = minScoresByYear[2023];
+                int score2024 = minScoresByYear[2024];
+
+                // 预测 2025 年的分数线
+                double predictedScore = predictScore(2022, score2022, 2023, score2023, 2024, score2024, 2025);
+                std::cout << "Year2025 (仅供参考): " << predictedScore << std::endl;
+            } else {
+                std::cout << "数据不足。" << std::endl;
+                exit(2);
+            }
         } else {
             std::cout << "没有找到匹配的大学或专业。" << std::endl;
+            exit(1);
         }
     }
 }
