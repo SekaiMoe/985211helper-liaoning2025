@@ -1,0 +1,48 @@
+= CMake Examples
+
+# Introduction
+
+https://cmake.org/[CMake] is a cross-platform open-source meta-build system which
+can build, test and package software. It can be used to support multiple native build environments including
+make, Apple's xcode and Microsoft Visual Studio.
+
+This repository includes some example modern CMake configurations which I have picked up
+when exploring it's usage for various projects. The examples are laid out in a tutorial like format.
+The first examples are very basic and slowly increase in complexity drawing on previous examples to show
+more complex use cases.
+
+These examples have been tested on Ubuntu 22.04 but should work under any Linux system that supports CMake v3.10+.
+
+# Requirements
+
+The basic requirements for most examples are:
+
+* CMake v3.10+
+* A c++ compiler (defaults to gcc)
+* make
+
+## Installation on Ubuntu
+
+The easiest way to install the above on Ubuntu is as follows
+
+[source,bash]
+----
+$ sudo apt-get install build-essential
+$ sudo apt-get install cmake
+----
+
+Some specific examples may require other tools including:
+
+* http://cppcheck.sourceforge.net/[cppcheck]
+
+  $ sudo apt-get install cppcheck
+
+* http://clang.llvm.org/[clang]
+
+  $ sudo apt-get install clang-3.6
+
+* https://ninja-build.org/[ninja]
+
+  $ sudo apt-get install ninja-build
+
+
