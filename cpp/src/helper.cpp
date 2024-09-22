@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
     projsignal::register_signal();
     if (argc < 2)  {
         std::cout << "Error: No inputs.\n"
-        << "Please use 'interface -h' to learn how to use.\n";
+        << "Please use 'helper -h' to learn how to use.\n";
         exit(1);
     } else if (argc > 4){
         std::cout << "Error: Too many inputs.\n";

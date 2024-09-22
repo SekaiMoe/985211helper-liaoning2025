@@ -27,6 +27,7 @@ namespace start {
 
 namespace search {
     void search(const std::string& university, const std::string& profession);
+    void listProfessions(const std::string& university, std::vector<std::string>& professions);
 }
 
 #endif

@@ -26,7 +26,7 @@ namespace search {
         bool is211 = false;
         bool found = false;
 
-        for (const auto& uni : universityData) {
+/*        for (const auto& uni : universityData) {
             // 精确匹配大学名称和专业
             if (uni.name == university && uni.profession == profession) {
             // 过滤年份在2022-2024之间
@@ -45,9 +45,26 @@ namespace search {
                 }
             }
         }
+*/
+        for (const auto& uni : universityData) {
+            if (uni.name == university && uni.profession == profession) {
+                if (uni.year >= 2022 && uni.year <= 2024) {
+                    found = true;
+                    is985 = uni.is985;
+                    is211 = uni.is211;
+
+                    if (uni.score != "null" && !uni.score.empty()) {
+                        int scoreInt = std::stoi(uni.score);
+                        if (minScoresByYear.find(uni.year) == minScoresByYear.end() || scoreInt < minScoresByYear[uni.year]) {
+                            minScoresByYear[uni.year] = scoreInt;
+                        }
+                    }
+                }
+            }
+        }
         // 输出每年的最低投档线
         if (found) {
-            std::cout << university << profession << "2022-2024年最低投档分:" << std::endl;
+            std::cout << "\n" << university << profession << "2022-2024年最低投档分:" << std::endl;
             for (int year = 2022; year <= 2024; ++year) {
                 std::cout << "Year " << year << ": ";
                 auto it = minScoresByYear.find(year);
@@ -65,7 +82,7 @@ namespace search {
 
                 // 预测 2025 年的分数线
                 double predictedScore = predictScore(2022, score2022, 2023, score2023, 2024, score2024, 2025);
-                std::cout << "Year2025 (仅供参考): " << predictedScore << std::endl;
+                std::cout << "Year 2025 (仅供参考): " << predictedScore << std::endl;
 
             } else {
                 std::cout << "数据不足。" << std::endl;
@@ -87,6 +104,16 @@ namespace search {
         } else {
             std::cout << "没有找到匹配的大学或专业。" << std::endl;
             exit(1);
+        }
+    }
+
+    void listProfessions(const std::string& university, std::vector<std::string>& professions) {
+        for (const auto& uni : universityData) {
+            if (uni.name == university) {
+                if (std::find(professions.begin(), professions.end(), uni.profession) == professions.end()) {
+                    professions.push_back(uni.profession);
+                }
+            }
         }
     }
 }
