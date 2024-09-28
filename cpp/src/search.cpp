@@ -1,6 +1,7 @@
 #include <data.h>
 #include <base.h>
 #include <algorithm> // std::min
+#include <cmath>
 
 std::map<int, int> minScoresByYear;
 
@@ -64,15 +65,30 @@ namespace search {
         }
         // 输出每年的最低投档线
         if (found) {
-            std::cout << "\n" << university << profession << "2022-2024年最低投档分:" << std::endl;
+            std::cout << university << profession << "2022-2024年最低投档分:" << std::endl;
+            int totalScore = 0;  // 用于计算总分
+            int count = 0;
             for (int year = 2022; year <= 2024; ++year) {
                 std::cout << "Year " << year << ": ";
                 auto it = minScoresByYear.find(year);
                 if (it != minScoresByYear.end()) {
+                    //std::cout << it->second << std::endl;
+                    totalScore += it->second;  // 累加分数
+                    ++count;
+                    auto it = minScoresByYear.find(year);
                     std::cout << it->second << std::endl;
                 } else {
                     std::cout << "No data" << std::endl;
                 }
+            }
+
+            if (count == 3) {
+                // double averageScore = static_cast<double>(totalScore) / count;
+                double averageScore = static_cast<double>(totalScore) / count;
+                int roundedAverageScore = static_cast<int>(std::ceil(averageScore));  // 向上取整
+                std::cout << "近三年平均分（向上取整）: " << roundedAverageScore << std::endl;
+            } else {
+                std::cout << "无法计算三年平均分，数据不足。" << std::endl;
             }
 
             if (minScoresByYear.size() == 3) {
