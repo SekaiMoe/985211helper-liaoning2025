@@ -1,6 +1,5 @@
 #include <data.h>
 #include <base.h>
-#include <algorithm> // std::min
 
 std::map<int, int> minScoresByYear;
 
