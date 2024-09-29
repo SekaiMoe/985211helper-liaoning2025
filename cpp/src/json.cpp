@@ -242,7 +242,6 @@ Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
-#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <istream>
