@@ -1,4 +1,5 @@
 #include <version.h>
+#include <base.h>
 
 namespace version {
     void version() {

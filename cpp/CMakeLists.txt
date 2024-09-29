@@ -77,6 +77,11 @@ if (DEBUG_MODE)
 else()
     set(CMAKE_BUILD_TYPE Release)
     add_compile_options(-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_REENTRANT)
+    add_custom_command(
+        TARGET helper
+        POST_BUILD
+        COMMAND strip helper
+        VERBATIM)
 endif()
 
 # add the source
@@ -111,12 +116,6 @@ add_executable(helper   src/helper.cpp
     src/data.cpp  # Explicitly adding data.cpp
 )
 
-add_custom_command(
-        TARGET helper
-        POST_BUILD
-        COMMAND strip helper
-        VERBATIM
-)
 install (TARGETS helper DESTINATION /usr/local/bin/)
 
 # add cxx flags

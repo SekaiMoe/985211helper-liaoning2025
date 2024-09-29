@@ -33,6 +33,13 @@ namespace start {
                 exit(0);  // 用户选择退出
             }
 
+            if (std::cin.fail()) {
+                std::cin.clear();  // 清除错误状态
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 丢弃无效输入
+                std::cerr << "无效的输入，请重新输入。" << std::endl;
+                continue;  // 重新提示用户输入
+            }
+
             if (choice < 1 || choice > static_cast<int>(professions.size())) {
                 std::cerr << "无效的选择，请重新输入。" << std::endl;
             } else {

@@ -1,7 +1,6 @@
 #include <data.h>
 #include <base.h>
 #include <algorithm> // std::min
-#include <cmath>
 
 std::map<int, int> minScoresByYear;
 
@@ -86,7 +85,7 @@ namespace search {
                 // double averageScore = static_cast<double>(totalScore) / count;
                 double averageScore = static_cast<double>(totalScore) / count;
                 int roundedAverageScore = static_cast<int>(std::ceil(averageScore));  // 向上取整
-                std::cout << "近三年平均分（向上取整）: " << roundedAverageScore << std::endl;
+                std::cout << "近三年平均分(向上取整):" << roundedAverageScore << std::endl;
             } else {
                 std::cout << "无法计算三年平均分，数据不足。" << std::endl;
             }

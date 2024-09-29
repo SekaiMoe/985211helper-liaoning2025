@@ -242,25 +242,18 @@ Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
-#if !defined(JSON_IS_AMALGAMATION)
-#include "json_tool.h"
-#include <json/assertions.h>
-#include <json/reader.h>
-#include <json/value.h>
-#endif // if !defined(JSON_IS_AMALGAMATION)
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <cstring>
-#include <iostream>
 #include <istream>
-#include <limits>
+#include <sstream>
 #include <memory>
 #include <set>
-#include <sstream>
 #include <utility>
 
 #include <cstdio>
+
+#include <base.h>
 #if __cplusplus >= 201103L
 
 #if !defined(sscanf)

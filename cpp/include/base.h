@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
+#include <cmath>
 #include <json/json.h>
 
 namespace projsignal {
