@@ -5,6 +5,7 @@
 #include <fstream>
 #include <limits>
 #include <cmath>
+#include <algorithm>
 #include <json/json.h>
 
 namespace projsignal {
