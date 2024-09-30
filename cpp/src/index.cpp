@@ -1,8 +1,8 @@
 #include <base.h>
 #include <data.h>
 
-namespace start {
-    void start() {
+namespace startcli {
+    void startcli() {
         const char* filePath = "./metadata.json";
         view::view(filePath);
         // 用户输入大学和专业

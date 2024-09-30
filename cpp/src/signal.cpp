@@ -10,7 +10,7 @@
 namespace projsignal {
     static void write_log(const char* msg) {
         // 打开日志文件
-        std::ofstream logfile("/var/log/program_crash.log", std::ios::app);
+        std::ofstream logfile("./program_crash.log", std::ios::app);
         if (logfile.is_open()) {
             // 获取当前时间戳
             std::time_t t = std::time(nullptr);

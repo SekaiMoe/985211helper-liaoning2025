@@ -4,13 +4,17 @@ if(",${CMAKE_CURRENT_SOURCE_DIR}," STREQUAL ",${CMAKE_CURRENT_BINARY_DIR},")
     message(FATAL_ERROR "ERROR: In-source builds are not allowed, please use an extra build dir.")
 endif()
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.25)
 
 # set the project name
 project(helper LANGUAGES CXX VERSION 0.0.1)
 
 include(CheckIncludeFileCXX)
 include(CheckIncludeFile)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 # add cxx standard
 set(CMAKE_CXX_STANDARD 17)
@@ -84,9 +88,6 @@ else()
         VERBATIM)
 endif()
 
-# add the source
-file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
-
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Configure CCache if available
@@ -114,7 +115,20 @@ add_executable(helper   src/helper.cpp
     src/usage.cpp
     src/version.cpp
     src/data.cpp  # Explicitly adding data.cpp
+    src/qt/window.cpp
+    src/qt/qml.qrc
 )
+
+# Find Qt5
+find_package(Qt5 REQUIRED COMPONENTS Widgets Gui Core Qml)
+target_link_libraries(helper Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml)
+
+option(BUILD_TEST "Whether or not to build the tests" ON)
+if (${BUILD_TEST})
+    message(STATUS "Building tests")
+    enable_testing() # Enable testing only works in root scope
+    add_subdirectory(test)
+endif ()
 
 install (TARGETS helper DESTINATION /usr/local/bin/)
 
