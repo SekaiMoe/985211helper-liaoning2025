@@ -20,10 +20,12 @@ public:
 public slots:
     void updateProfessions(const QString &university);
     void performSearch(const QString &university, const QString &profession);
+    void viewMetadata();
 
 signals:
     void professionsUpdated(const QStringList &professions);
     void searchCompleted(const QString &result);
+    void metadataViewed(const QString &metadata);
 };
 
 #endif // WINDOW_H

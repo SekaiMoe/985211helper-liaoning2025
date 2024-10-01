@@ -40,6 +40,12 @@ Window {
             onClicked: backend.performSearch(universityInput.text, professionCombo.currentText)
         }
 
+        Button {
+            text: "查看元数据"
+            Layout.fillWidth: true
+            onClicked: backend.viewMetadata()
+        }
+
         ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -59,6 +65,9 @@ Window {
         }
         function onSearchCompleted(result) {
             resultText.text = result
+        }
+        function onMetadataViewed(metadata) {
+            resultText.text = metadata
         }
     }
 }
