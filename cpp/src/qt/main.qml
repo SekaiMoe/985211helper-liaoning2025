@@ -24,6 +24,11 @@ Window {
             onTextChanged: backend.updateProfessions(text)
         }
 
+        onAccepted: {
+             professionModel.clear();
+             backend.queryProfessions(universityInput.text);
+        }
+
         Label {
             text: "请选择专业:"
         }

@@ -46,7 +46,11 @@ void Window::updateProfessions(const QString &university)
 {
     std::vector<std::string> professions;
     search::listProfessions(university.toStdString(), professions);
-    
+    if (professions.empty()) {
+        std::cout << "No professions found for university: " << university.toStdString() << std::endl;
+    } else {
+        std::cout << "Professions found: " << professions.size() << std::endl;
+    }
     QStringList professionList;
     for (const auto &profession : professions)
     {
@@ -86,3 +90,5 @@ void Window::viewMetadata()
 
     emit metadataViewed(QString::fromStdString(buffer.str()));
 }
+
+#include "main.moc"

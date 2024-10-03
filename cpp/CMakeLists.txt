@@ -88,6 +88,28 @@ else()
         VERBATIM)
 endif()
 
+option(APPUI_TUI "Enable TUI (Text User Interface)" OFF)
+option(APPUI_GUI "Enable GUI (Graphical User Interface)" OFF)
+option(APPUI_WEBUI "Enable WEBUI (Web User Interface)" OFF)
+
+# 检查是否同时启用了多个选项
+math(EXPR num_selected "${APPUI_TUI}+${APPUI_GUI}+${APPUI_WEBUI}")
+if (num_selected GREATER 1)
+    message(FATAL_ERROR "You can only enable one of APPUI_TUI, APPUI_GUI, or APPUI_WEBUI.")
+elseif (num_selected EQUAL 0)
+    message(WARNING "Warning: app ui is not defined.This will be switch to tui.")
+    add_definitions(-DAPPUI=\"TUI\")
+else()
+    # 根据启用的选项定义预处理宏
+    if (APPUI_TUI)
+        add_definitions(-DAPPUI=\"TUI\")
+    elseif (APPUI_GUI)
+        add_definitions(-DAPPUI=\"GUI\")
+    elseif (APPUI_WEBUI)
+        add_definitions(-DAPPUI=\"WEBUI\")
+    endif()
+endif()
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Configure CCache if available
@@ -117,6 +139,7 @@ add_executable(helper   src/helper.cpp
     src/data.cpp  # Explicitly adding data.cpp
     src/qt/window.cpp
     src/qt/qml.qrc
+    src/web/web.cpp
 )
 
 # Find Qt5
@@ -125,7 +148,7 @@ target_link_libraries(helper Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml)
 
 option(BUILD_TEST "Whether or not to build the tests" ON)
 if (${BUILD_TEST})
-    message(STATUS "Building tests")
+    message(STATUS "Tests will be built.")
     enable_testing() # Enable testing only works in root scope
     add_subdirectory(test)
 endif ()
