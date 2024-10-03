@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Professions</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>University Professions</h1>
+        
+        <label for="university">Select University:</label>
+        <select v-model="selectedUniversity" @change="fetchProfessions">
+            <option v-for="university in universities" :value="university.id">{{ university.name }}</option>
+        </select>
+        
+        <h2>Available Professions</h2>
+        <ul>
+            <li v-for="profession in professions">{{ profession.name }}</li>
+        </ul>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                selectedUniversity: null,
+                universities: [
+                    { id: 1, name: 'University 1' },
+                    { id: 2, name: 'University 2' }
+                ],
+                professions: []
+            },
+            methods: {
+                fetchProfessions() {
+                    // 使用 axios 请求 Crow 后端 API
+                    axios.get(`/api/professions/${this.selectedUniversity}`)
+                        .then(response => {
+                            this.professions = response.data.professions;
+                        })
+                        .catch(error => {
+                            console.error("Error fetching professions:", error);
+                        });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

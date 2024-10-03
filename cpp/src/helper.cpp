@@ -29,9 +29,7 @@ int main(int argc, char *argv[]) {
                         usage::usage();
                         exit(0);
                     case 's': {
-                        if (QGuiApplication::screens().isEmpty()) {
-                            std::cout << "No available screens for GUI. Switching to CLI mode." << std::endl;
-	                    startcli::startcli();
+	                    run::startcheck();
                             exit(0);
                         }
                         break;
