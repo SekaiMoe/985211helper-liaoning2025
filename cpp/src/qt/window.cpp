@@ -25,7 +25,7 @@ int Window::runGUI(int argc, char *argv[])
     if (!hasGUI()) {
         return -1; // 表示无法运行GUI
     }
-    
+    #ifdef GUI
     QQmlApplicationEngine engine;
     
     Window window;
@@ -40,6 +40,7 @@ int Window::runGUI(int argc, char *argv[])
     engine.load(url);
     
     return app.exec();
+    #endif
 }
 
 void Window::updateProfessions(const QString &university)
@@ -91,4 +92,4 @@ void Window::viewMetadata()
     emit metadataViewed(QString::fromStdString(buffer.str()));
 }
 
-#include "main.moc"
+

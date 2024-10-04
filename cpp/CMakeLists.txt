@@ -26,6 +26,21 @@ add_compile_options("-fstack-protector-all")
 add_compile_options("-std=c++17")
 add_compile_options("-pipe")
 
+#add the executable
+set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
+add_executable(helper   src/helper.cpp
+    src/index.cpp
+    src/json.cpp
+    src/search.cpp
+    src/signal.cpp
+    src/usage.cpp
+    src/version.cpp
+    src/data.cpp  # Explicitly adding data.cpp
+    src/qt/window.cpp
+    src/qt/qml.qrc
+    src/web/web.cpp
+)
+
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 include(CheckCXXCompilerFlag)
@@ -92,21 +107,38 @@ option(APPUI_TUI "Enable TUI (Text User Interface)" OFF)
 option(APPUI_GUI "Enable GUI (Graphical User Interface)" OFF)
 option(APPUI_WEBUI "Enable WEBUI (Web User Interface)" OFF)
 
+set(APPUI_TUI_NUM 0)
+set(APPUI_GUI_NUM 0)
+set(APPUI_WEBUI_NUM 0)
+
+if (APPUI_TUI)
+    set(APPUI_TUI_NUM 1)
+endif()
+
+if (APPUI_GUI)
+    set(APPUI_GUI_NUM 1)
+endif()
+
+if (APPUI_WEBUI)
+    set(APPUI_WEBUI_NUM 1)
+endif()
+
 # 检查是否同时启用了多个选项
-math(EXPR num_selected "${APPUI_TUI}+${APPUI_GUI}+${APPUI_WEBUI}")
+math(EXPR num_selected "${APPUI_TUI_NUM}+${APPUI_GUI_NUM}+${APPUI_WEBUI_NUM}")
+
 if (num_selected GREATER 1)
     message(FATAL_ERROR "You can only enable one of APPUI_TUI, APPUI_GUI, or APPUI_WEBUI.")
 elseif (num_selected EQUAL 0)
-    message(WARNING "Warning: app ui is not defined.This will be switch to tui.")
+    message(WARNING "Warning: no UI type selected. Defaulting to TUI.")
     add_definitions(-DAPPUI=\"TUI\")
 else()
     # 根据启用的选项定义预处理宏
     if (APPUI_TUI)
         add_definitions(-DAPPUI=\"TUI\")
     elseif (APPUI_GUI)
-        add_definitions(-DAPPUI=\"GUI\")
+        add_definitions(-DAPPUI=\"GUI\" -DGUI)
     elseif (APPUI_WEBUI)
-        add_definitions(-DAPPUI=\"WEBUI\")
+        add_definitions(-DAPPUI=\"WEBUI\" -DWEBUI)
     endif()
 endif()
 
@@ -127,20 +159,6 @@ if(NOT PYTHON_FOUND)
     message(FATAL_ERROR "Cannot build test suites without Python")
 endif()
 
-#add the executable
-set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
-add_executable(helper   src/helper.cpp
-    src/index.cpp
-    src/json.cpp
-    src/search.cpp
-    src/signal.cpp
-    src/usage.cpp
-    src/version.cpp
-    src/data.cpp  # Explicitly adding data.cpp
-    src/qt/window.cpp
-    src/qt/qml.qrc
-    src/web/web.cpp
-)
 
 # Find Qt5
 find_package(Qt5 REQUIRED COMPONENTS Widgets Gui Core Qml)

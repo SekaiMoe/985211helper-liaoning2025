@@ -29,10 +29,18 @@ int main(int argc, char *argv[]) {
                         usage::usage();
                         exit(0);
                     case 's': {
-	                    run::startcheck();
-                            exit(0);
-                        }
-                        break;
+			    #ifdef APPUI
+			        #ifdef WEBUI
+			            webui::start();
+			        #else
+				        #ifdef GUI
+				            Window::runGUI();
+				        #else
+				            startcli::startcli();
+					#endif
+			        #endif
+			#endif
+                        exit(0);
                     }
                     default:
                         std::cerr << version::prog_name << ": Error: Unrecognized option: " << pchar << std::endl;

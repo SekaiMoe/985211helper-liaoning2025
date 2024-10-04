@@ -1,3 +1,5 @@
+#ifdef WEBUI
+
 #include "crow.h"
 #include <base.h>  // 引入你现有的头文件
 
@@ -27,3 +29,5 @@ namespace webui {
 	    app.port(8080).multithreaded().run();
 	}
 }
+
+#endif
