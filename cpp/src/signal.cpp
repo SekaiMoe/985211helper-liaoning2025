@@ -2,7 +2,6 @@
 #include <fcntl.h> // For open(), O_RDONLY, O_CLOEXEC
 #include <unistd.h> // For close() function
 #include <execinfo.h> // For backtrace
-#include <fstream> // For writing logs
 #include <ctime> // For timestamp
 
 #include <base.h>

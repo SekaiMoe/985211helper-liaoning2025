@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <limits>
 #include <cmath>
 #include <algorithm>
@@ -24,7 +25,7 @@ namespace usage {
     void usage();
 }
 
-namespace start {
+namespace webui {
     void start();
 }
 

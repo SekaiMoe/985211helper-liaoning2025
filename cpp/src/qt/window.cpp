@@ -21,11 +21,10 @@ bool Window::hasGUI()
 int Window::runGUI(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    
+    #ifdef GUI
     if (!hasGUI()) {
         return -1; // 表示无法运行GUI
     }
-    #ifdef GUI
     QQmlApplicationEngine engine;
     
     Window window;
@@ -40,6 +39,8 @@ int Window::runGUI(int argc, char *argv[])
     engine.load(url);
     
     return app.exec();
+    #else
+    return -1;
     #endif
 }
 
