@@ -12,10 +12,6 @@ project(helper LANGUAGES CXX VERSION 0.0.1)
 include(CheckIncludeFileCXX)
 include(CheckIncludeFile)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
 # add cxx standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -36,8 +32,6 @@ add_executable(helper   src/helper.cpp
     src/usage.cpp
     src/version.cpp
     src/data.cpp  # Explicitly adding data.cpp
-    src/qt/window.cpp
-    src/qt/qml.qrc
     src/web/web.cpp
 )
 
@@ -103,45 +97,13 @@ else()
         VERBATIM)
 endif()
 
-option(APPUI_TUI "Enable TUI (Text User Interface)" OFF)
-option(APPUI_GUI "Enable GUI (Graphical User Interface)" OFF)
 option(APPUI_WEBUI "Enable WEBUI (Web User Interface)" OFF)
-
-set(APPUI_TUI_NUM 0)
-set(APPUI_GUI_NUM 0)
-set(APPUI_WEBUI_NUM 0)
-
-if (APPUI_TUI)
-    set(APPUI_TUI_NUM 1)
-endif()
-
-if (APPUI_GUI)
-    set(APPUI_GUI_NUM 1)
-endif()
-
+# 根据启用的选项定义预处理宏
 if (APPUI_WEBUI)
-    set(APPUI_WEBUI_NUM 1)
-endif()
-
-# 检查是否同时启用了多个选项
-math(EXPR num_selected "${APPUI_TUI_NUM}+${APPUI_GUI_NUM}+${APPUI_WEBUI_NUM}")
-
-if (num_selected GREATER 1)
-    message(FATAL_ERROR "You can only enable one of APPUI_TUI, APPUI_GUI, or APPUI_WEBUI.")
-elseif (num_selected EQUAL 0)
-    message(WARNING "Warning: no UI type selected. Defaulting to TUI.")
-    add_definitions(-DAPPUI=\"TUI\")
+    add_definitions(-DAPPUI=\"WEBUI\" -DWEBUI)
 else()
-    # 根据启用的选项定义预处理宏
-    if (APPUI_TUI)
-        add_definitions(-DAPPUI=\"TUI\")
-    elseif (APPUI_GUI)
-        add_definitions(-DAPPUI=\"GUI\" -DGUI)
-    elseif (APPUI_WEBUI)
-        add_definitions(-DAPPUI=\"WEBUI\" -DWEBUI)
-    endif()
+    add_definitions(-DAPPUI=\"TUI\" -DTUI)
 endif()
-
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Configure CCache if available
@@ -158,11 +120,6 @@ find_package(Python)
 if(NOT PYTHON_FOUND)
     message(FATAL_ERROR "Cannot build test suites without Python")
 endif()
-
-
-# Find Qt5
-find_package(Qt5 REQUIRED COMPONENTS Widgets Gui Core Qml)
-target_link_libraries(helper Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml)
 
 option(BUILD_TEST "Whether or not to build the tests" ON)
 if (${BUILD_TEST})

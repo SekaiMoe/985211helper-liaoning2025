@@ -1,7 +1,5 @@
 #include <base.h>
 #include <version.h>
-#include "qt/window.h"
-#include <QScreen>
 #include <cstdlib>  // for getenv()
 
 int main(int argc, char *argv[]) {
@@ -33,11 +31,7 @@ int main(int argc, char *argv[]) {
 			        #ifdef WEBUI
 			            webui::start();
 			        #else
-				        #ifdef GUI
-				            Window::runGUI();
-				        #else
-				            startcli::startcli();
-					#endif
+				    startcli::startcli();
 			        #endif
 			#endif
                         exit(0);
