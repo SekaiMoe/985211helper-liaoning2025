@@ -4,6 +4,8 @@
 #include <base.h>  // 引入你现有的头文件
 
 std::string load_html(const std::string& filepath) {
+    const char* filePath = "./metadata.json";
+    view::view(filePath);
     std::ifstream file(filepath);
     if (!file.is_open()) {
         return "Failed to load HTML file.";
