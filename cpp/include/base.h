@@ -9,6 +9,10 @@
 #include <algorithm>
 #include <json/json.h>
 
+#ifdef WEBUI
+#include "../src/web/crow.h"
+#endif
+
 namespace projsignal {
     void register_signal(void);
 }
@@ -34,7 +38,11 @@ namespace startcli {
 }
 
 namespace search {
+    #ifdef WEBUI
+    void search(const std::string& university, const std::string& profession, crow::json::wvalue& response);
+    #else
     void search(const std::string& university, const std::string& profession);
+    #endif
     void listProfessions(const std::string& university, std::vector<std::string>& professions);
 }
 

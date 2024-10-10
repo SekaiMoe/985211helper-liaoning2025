@@ -123,10 +123,14 @@ endif()
 
 option(BUILD_TEST "Whether or not to build the tests" ON)
 if (${BUILD_TEST})
-    message(STATUS "Tests will be built.")
-    enable_testing() # Enable testing only works in root scope
-    add_subdirectory(test)
-endif ()
+    if (APPUI_WEBUI)
+        message(FATAL_ERROR "Please disable webui to build test")
+    else()
+        message(STATUS "Tests will be built.")
+        enable_testing() # Enable testing only works in root scope
+        add_subdirectory(test)
+    endif()
+endif()
 
 install (TARGETS helper DESTINATION /usr/local/bin/)
 

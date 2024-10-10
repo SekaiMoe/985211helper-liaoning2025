@@ -20,6 +20,74 @@ namespace search {
         double predictedScore = avgSlope * predictYear + intercept;
         return predictedScore;
     }
+    #ifdef WEBUI
+    void search(const std::string& university, const std::string& profession, crow::json::wvalue& response) {
+        bool found = false;
+        bool is985 = false;
+        bool is211 = false;
+
+        // 存储分数
+        std::map<int, int> minScoresByYear;
+
+        // 搜索大学和专业信息
+        for (const auto& uni : universityData) {
+            if (uni.name == university && uni.profession == profession) {
+                found = true;
+                is985 = uni.is985;
+                is211 = uni.is211;
+
+                if (uni.year >= 2022 && uni.year <= 2024) {
+                    if (minScoresByYear.find(uni.year) == minScoresByYear.end() || std::stoi(uni.score) < minScoresByYear[uni.year]) {
+                        minScoresByYear[uni.year] = std::stoi(uni.score);
+                    }
+                }
+            }
+        }
+
+        if (found) {
+            response["university"] = university;
+            response["profession"] = profession;
+
+            // 输出每年的最低投档线
+            crow::json::wvalue::list scoreList;
+            for (int year = 2022; year <= 2024; ++year) {
+                auto it = minScoresByYear.find(year);
+                if (it != minScoresByYear.end()) {
+                    scoreList.emplace_back(crow::json::wvalue{{"year", year}, {"score", it->second}});
+                } else {
+                    scoreList.emplace_back(crow::json::wvalue{{"year", year}, {"score", "No data"}});
+                }
+            }
+            response["scores"] = std::move(scoreList);
+
+            // 计算平均分
+            int totalScore = 0;
+            if (minScoresByYear.size() == 3) {
+                for (const auto& entry : minScoresByYear) {
+                    totalScore += entry.second;
+                }
+                int averageScore = static_cast<int>(std::ceil(static_cast<double>(totalScore) / 3));
+                response["average_score"] = averageScore;
+
+                // 预测 2025 年的分数
+                int score2022 = minScoresByYear[2022];
+                int score2023 = minScoresByYear[2023];
+                int score2024 = minScoresByYear[2024];
+                double predictedScore = predictScore(2022, score2022, 2023, score2023, 2024, score2024, 2025);
+                response["predicted_2025_score"] = predictedScore;
+            } else {
+                response["average_score"] = "无法计算三年平均分，数据不足。";
+            }
+
+            // 985/211 信息
+            response["is985"] = is985 ? "是" : "否";
+            response["is211"] = is211 ? "是" : "否";
+
+        } else {
+            response["error"] = "没有找到匹配的大学或专业。";
+        }
+    }
+    #else
     void search(const std::string& university, const std::string& profession) {
         bool is985 = false;
         bool is211 = false;
@@ -120,6 +188,7 @@ namespace search {
             exit(1);
         }
     }
+    #endif
 
     void listProfessions(const std::string& university, std::vector<std::string>& professions) {
         for (const auto& uni : universityData) {

@@ -21,6 +21,8 @@ namespace view {
             exit(1);
         }
 
+        universityData.clear();
+
         // 遍历 JSON 数组
         for (const auto& it : jsonData) {
             UniversityInfo uniInfo;
@@ -31,9 +33,9 @@ namespace view {
             uniInfo.is985 = it["is985"].asInt();
             uniInfo.is211 = it["is211"].asInt();
             uniInfo.score = it["score"].isNull() ? "null" : std::to_string(it["score"].asInt());
-
             universityData.push_back(uniInfo);
         }
+        std::cout << "json loaded successfully.\n";
     }
 }
 

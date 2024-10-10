@@ -9,9 +9,13 @@ namespace startcli {
         std::string university, profession;
         std::cout << "请输入大学名称: ";
         std::getline(std::cin, university);
-
+        #ifndef WEBI
         std::vector<std::string> professions;
         search::listProfessions(university, professions);
+        #else
+        search::listProfessions(university, professions, response);
+        exit(0);
+        #endif
 
         if (professions.empty()) {
             std::cout << "没有找到该大学。" << std::endl;
@@ -50,7 +54,11 @@ namespace startcli {
         profession = professions[static_cast<std::vector<std::string>::size_type>(choice - 1)];
         // 执行精确搜索
         //std::string profession = professions[choice - 1];
+        #ifndef WEBUI
         search::search(university, profession);
+        #else
+        exit(0);
+        #endif
         return;
     }
 }
