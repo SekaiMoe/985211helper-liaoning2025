@@ -1,8 +1,6 @@
 #ifdef WEBUI
 
-#include "crow.h"
 #include <base.h>
-
 #include <cctype>
 
 std::string load_html(const std::string& filepath) {

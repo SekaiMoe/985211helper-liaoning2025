@@ -1,6 +1,5 @@
 #include <base.h>
 #include <version.h>
-#include <cstdlib>  // for getenv()
 
 int main(int argc, char *argv[]) {
     projsignal::register_signal();

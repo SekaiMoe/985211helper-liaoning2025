@@ -4,7 +4,7 @@ if(",${CMAKE_CURRENT_SOURCE_DIR}," STREQUAL ",${CMAKE_CURRENT_BINARY_DIR},")
     message(FATAL_ERROR "ERROR: In-source builds are not allowed, please use an extra build dir.")
 endif()
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.10)
 
 # set the project name
 project(helper LANGUAGES CXX VERSION 0.0.1)
