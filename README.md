@@ -23,8 +23,9 @@
 - [ ] 志愿填报建议
 - [ ] 最低位次查询
 - [x] 985,211院校标记
-- [ ] 支持命令界面和图形界面运行(大概是完不成了)
+- [x] 支持命令界面和图形界面运行(使用预定义宏切换)
 
 ## 其他链接
 - [json 库](https://github.com/open-source-parsers/jsoncpp/)
+- [web 库]
 - [灵感来源](https://github.com/cHiLabs-production/985211helper-zj)
