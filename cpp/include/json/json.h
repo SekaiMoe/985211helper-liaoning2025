@@ -131,9 +131,8 @@ license you like.
 #ifndef JSON_ALLOCATOR_H_INCLUDED
 #define JSON_ALLOCATOR_H_INCLUDED
 
-#include <algorithm>
-#include <cstring>
 #include <memory>
+#include <cstring>
 
 #pragma pack(push)
 #pragma pack()
