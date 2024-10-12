@@ -3,19 +3,6 @@
 #include <base.h>
 #include <cctype>
 
-std::string load_html(const std::string& filepath) {
-    const char* filePath = "./metadata.json";
-    view::view(filePath);
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        return "Failed to load HTML file.";
-    }
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return buffer.str();
-}
-
-
 std::string url_decode(const std::string& src) {
     std::string dest;
     char ch;
@@ -36,6 +23,98 @@ std::string url_decode(const std::string& src) {
 }
 
 namespace webui {
+
+    const std::string embedded_html = R"(
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>University Professions Query</title>
+	    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	</head>
+	<body>
+	    <div id="app">
+	        <h1>专业分数线自助查询系统V0.0.1</h1>
+
+	        <!-- 输入大学名称 -->
+	        <label for="university">请输入大学名称:</label>
+	        <input type="text" v-model="university" placeholder="输入大学名称">
+	        <button @click="fetchProfessions">查询专业</button>
+
+	        <!-- 显示专业选择 -->
+	        <div v-if="professions.length">
+	            <h2>选择专业:</h2>
+	            <select v-model="selectedProfession">
+	                <option v-for="profession in professions" :key="profession">{{ profession }}</option>
+	            </select>
+	            <button @click="fetchResults" :disabled="!selectedProfession">查询</button>
+	        </div>
+
+	        <!-- 显示查询结果 -->
+	        <h2 v-if="result">查询结果:</h2>
+	        <p v-if="result" v-html="result"></p>
+
+	    </div>
+	<script>
+	    new Vue({
+	        el: '#app',
+	        data: {
+	            university: '',  // 用户输入的大学名称
+	            professions: [],  // 专业列表
+	            selectedProfession: '',  // 用户选择的专业
+	            result: '',  // 查询结果
+	            searched: false  // 是否已进行查询
+	        },
+	        methods: {
+	            fetchProfessions() {
+	                // 重置
+	                this.professions = [];
+        	        this.selectedProfession = '';
+	                this.result = '';
+
+	                // 请求大学对应的专业列表
+	                axios.get(`/api/professions/${this.university}`)
+	                    .then(response => {
+        	                this.professions = response.data.professions;
+	                        this.searched = true;
+	                    })
+	                    .catch(error => {
+	                        console.error("Error fetching professions:", error);
+	                        alert("无法获取专业列表，请检查服务器。");
+	                    });
+	            },
+	            fetchResults() {
+	                // 查询大学和选择的专业
+	                axios.get(`/api/search/${this.university}/${this.selectedProfession}`)
+	                    .then(response => {
+	                        console.log("Response data:", response.data);
+	                        // 根据返回的数据更新结果并插入换行符
+	                        this.result = `
+        	                    学校: ${response.data.university}<br>
+	                            专业: ${response.data.profession}<br>
+	                            最低投档分数:<br>
+	                            ${response.data.scores.map(score => `Year ${score.year}: ${score.score}`).join('<br>')}<br>
+	                            近三年平均分(向上取整): ${response.data.average_score}<br>
+	                            Year 2025(仅供参考): ${response.data.predicted_2025_score}<br>
+	                            该学校是否是985: ${response.data.is985}<br>
+	                            该学校是否是211: ${response.data.is211}
+        	                `;
+	                    })
+	                    .catch(error => {
+	                        console.error("Error fetching results:", error);
+	                        alert("查询失败，请检查服务器。");
+	                    });
+	            }
+	        }
+	    });
+	</script>
+
+	</body>
+	</html>
+    )";
+
     void start() {
         crow::SimpleApp app;
 
@@ -79,7 +158,7 @@ namespace webui {
 
         CROW_ROUTE(app, "/")
         ([]{
-            return load_html("index.html");  // 返回 index.html 文件内容
+            return embedded_html;
         });
 
         try {
