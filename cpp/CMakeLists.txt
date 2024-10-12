@@ -21,6 +21,10 @@ add_compile_options("-fstack-clash-protection")
 add_compile_options("-fstack-protector-all")
 add_compile_options("-std=c++17")
 add_compile_options("-pipe")
+option(STATIC_BUILD "Enable static building" OFF)
+if (STATIC_BUILD)
+    add_compile_options("-static")
+endif()
 
 #add the executable
 set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
@@ -39,7 +43,8 @@ set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 include(CheckCXXCompilerFlag)
 set(FLAGS_TO_CHECK
-    "-flto"
+    "-static"
+    "-pipe"
     "-fdata-sections"
     "-ffunction-sections"
     "-fstack-clash-protection"
@@ -135,4 +140,8 @@ endif()
 install (TARGETS helper DESTINATION /usr/local/bin/)
 
 # add cxx flags
-set(CMAKE_EXE_LINKER_FLAGS "-ffunction-sections -fdata-sections -z now -z noexecstack -fPIE -flto")
+if (STATIC_BUILD)
+    set(CMAKE_EXE_LINKER_FLAGS "-ffunction-sections -fdata-sections -z now -z noexecstack -fPIE -static")
+else()
+    set(CMAKE_EXE_LINKER_FLAGS "-ffunction-sections -fdata-sections -z now -z noexecstack -fPIE")
+endif()
