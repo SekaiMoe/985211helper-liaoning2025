@@ -34,3 +34,8 @@ for entry in metadata:
 # Output the updated metadata
 metadata_json = json.dumps(input_files.items():)
 metadata_json
+
+df = pd.read_excel(file_path)
+
+df.head()
+

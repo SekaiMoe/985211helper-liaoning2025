@@ -30,13 +30,75 @@ namespace webui {
 	<head>
 	    <meta charset="UTF-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <title>University Professions Query</title>
+	    <title>Test html</title>
+    	    <style>
+                /* Fluent Design 样式 */
+                body {
+                    background: linear-gradient(to right, #0078D7, #00B4FF);
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    color: #ffffff;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                }
+                #app {
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 12px;
+                    padding: 20px;
+                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    width: 80%;
+                    max-width: 600px;
+                }
+                h1 {
+                    text-align: center;
+                    font-size: 24px;
+                }
+                label, select, input, button {
+                    display: block;
+                    width: 100%;
+                    margin-bottom: 15px;
+                    font-size: 16px;
+                }
+                input, select {
+                    padding: 10px;
+                    border-radius: 8px;
+                    border: none;
+                    background: rgba(255, 255, 255, 0.2);
+                    color: #fff;
+                }
+                button {
+                    padding: 12px;
+                    background-color: #0078D7;
+                    border: none;
+                    border-radius: 8px;
+                    color: #fff;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                }
+                button:hover {
+                    background-color: #005a9e;
+                }
+                h2 {
+                    margin-top: 20px;
+                    font-size: 20px;
+                }
+                p {
+                    line-height: 1.5;
+                    white-space: pre-wrap;
+                }
+            </style>
 	    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 	    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	</head>
 	<body>
 	    <div id="app">
-	        <h1>专业分数线自助查询系统V0.0.1</h1>
+	        <h4>专业分数线自助查询系统V0.0.1</h4>
 
 	        <!-- 输入大学名称 -->
 	        <label for="university">请输入大学名称:</label>
