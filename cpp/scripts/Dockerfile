@@ -3,7 +3,7 @@ WORKDIR /build
 COPY . .
 RUN apk add --no-cache cmake build-base samurai && \
     cd cpp && mkdir out && cd out && \
-    cmake .. -DAPPUI_WEBUI=on -DDEBUG_MODE=off -GNinja && \
+    cmake .. -DAPPUI_WEBUI=on -DDEBUG_MODE=off -DSTATIC_BUILD=on -GNinja && \
     ninja && \
     mv helper ../../out/
 
