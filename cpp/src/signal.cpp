@@ -1,7 +1,12 @@
 #include <csignal>
 #include <fcntl.h> // For open(), O_RDONLY, O_CLOEXEC
 #include <unistd.h> // For close() function
+#ifdef __GLIBC__
 #include <execinfo.h> // For backtrace
+#else
+#define backtrace(array, size) 0 // for musl
+#define backtrace_symbols(array, size) nullptr
+#endif
 #include <ctime> // For timestamp
 
 #include <base.h>
@@ -37,6 +42,7 @@ namespace projsignal {
         write_log(errorMsg.c_str());
 
         // 获取调用栈
+        #ifdef __GLIBC__
         void *array[10];
         int size = backtrace(array, 10);  // 将 size 的类型改为 int
         char **stackTrace = backtrace_symbols(array, size);
@@ -50,6 +56,9 @@ namespace projsignal {
             }
             free(stackTrace);
         }
+        #else
+        write_log("Stack trace not available.");
+        #endif
         exit(127);
     }
 

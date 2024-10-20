@@ -1,9 +1,9 @@
 FROM alpine:latest as builder
 WORKDIR /build
 COPY . .
-RUN apk add --no-cache cmake build-base samurai && \
+RUN apk add --no-cache cmake build-base samurai python3 linux-headers && \
     cd cpp && mkdir out && cd out && \
-    cmake .. -DAPPUI_WEBUI=on -DDEBUG_MODE=off -DSTATIC_BUILD=on -GNinja && \
+    cmake .. -DAPPUI_WEBUI=on -DDEBUG_MODE=off -DSTATIC_BUILD=on -DBUILD_TEST=off -GNinja && \
     ninja && \
     mv helper ../../out/
 
