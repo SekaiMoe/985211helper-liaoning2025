@@ -1,0 +1,115 @@
+From c16fdcd72389132d122328f3671ff7dfa2341e57 Mon Sep 17 00:00:00 2001
+From: dpkg123 <test1@qw5d.onmicrosoft.com>
+Date: Wed, 23 Oct 2024 21:14:43 +0800
+Subject: [PATCH] Using embedded json
+
+---
+ cpp/CMakeLists.txt |  2 +-
+ cpp/src/data.cpp   | 21 ++++++++++-----------
+ data/gencpp.py     | 29 +++++++++++++++++++++++++----
+ 3 files changed, 36 insertions(+), 16 deletions(-)
+
+diff --git a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+index 173a23b..1473bfb 100644
+--- a/cpp/CMakeLists.txt
++++ b/cpp/CMakeLists.txt
+@@ -90,7 +90,7 @@ if (DEBUG_MODE)
+         -Wredundant-decls -Wlogical-op
+         -Wstrict-overflow=5 -Winit-self
+         -Wuninitialized -Wsign-conversion
+-        -Wcast-qual
++        -Wcast-qual -O0
+     )
+ else()
+     set(CMAKE_BUILD_TYPE Release)
+diff --git a/cpp/src/data.cpp b/cpp/src/data.cpp
+index af61ef4..a72caed 100644
+--- a/cpp/src/data.cpp
++++ b/cpp/src/data.cpp
+@@ -1,22 +1,21 @@
+ #include <data.h>
+ 
++#include "metadata.h"
++
+ std::vector<UniversityInfo> universityData;
+ 
+ namespace view {
+-    void view(const char* filePath) {
+-        // 打开文件
+-        std::ifstream file(filePath, std::ifstream::binary);
+-        if (!file.is_open()) {
+-            std::cerr << "无法打开文件: " << filePath << std::endl;
+-            exit(2);
+-        }
++    void view() {
++        // 使用嵌入的 JSON 字符串
++        std::istringstream jsonStream(embedded_metadata_json);
+ 
+-        // 解析 JSON 文件
++        // 解析 JSON 数据
++        Json::CharReaderBuilder reader;
+         Json::Value jsonData;
+-        Json::CharReaderBuilder readerBuilder;
+         std::string errs;
++        std::istringstream stream(embedded_metadata_json);
+ 
+-        if (!Json::parseFromStream(readerBuilder, file, &jsonData, &errs)) {
++        if (!Json::parseFromStream(readerBuilder, jsonStream, &jsonData, &errs)) {
+             std::cerr << "解析 JSON 失败: " << errs << std::endl;
+             exit(1);
+         }
+@@ -35,7 +34,7 @@ namespace view {
+             uniInfo.score = it["score"].isNull() ? "null" : std::to_string(it["score"].asInt());
+             universityData.push_back(uniInfo);
+         }
+-        std::cout << "json loaded successfully.\n";
++        std::cout << "json loaded successfully from embedded data.\n";
+     }
+ }
+ 
+diff --git a/data/gencpp.py b/data/gencpp.py
+index 4c3f9a7..4d5f187 100644
+--- a/data/gencpp.py
++++ b/data/gencpp.py
+@@ -1,13 +1,34 @@
+ #!/usr/bin/env python3
+ import json
+ 
++# 读取 JSON 文件
+ with open('metadata.json', 'r', encoding='utf-8') as file:
+-    json_content = file.read()
++    json_content = json.load(file)  # 直接加载 JSON 数据为 Python 对象
+ 
+-cpp_string = f'const char* embedded_metadata_json = R"({json_content})";'
++# 将所有 null 转换为字符串 "null"
++def replace_nulls(obj):
++    if isinstance(obj, dict):
++        return {k: replace_nulls(v) for k, v in obj.items()}
++    elif isinstance(obj, list):
++        return [replace_nulls(v) for v in obj]
++    elif obj is None:
++        return "null"
++    return obj
+ 
+-with open('metadata.cpp', 'w', encoding='utf-8') as output_file:
++json_content = replace_nulls(json_content)
++
++# 将 JSON 转换为 C++ 格式的字符串，并进行转义处理
++json_string = json.dumps(json_content, ensure_ascii=False, indent=4)
++
++# 在 C++ 中，特殊字符如双引号需要转义
++json_string_escaped = json_string.replace('"', '\\"')
++
++# 生成 C++ 的字符串常量
++cpp_string = f'const char* embedded_metadata_json = "{json_string_escaped}";'
++
++# 将结果输出为 metadata.h 文件
++with open('metadata.h', 'w', encoding='utf-8') as output_file:
+     output_file.write(cpp_string)
+ 
+-print("metadata.cpp 已生成。")
++print("metadata.h 已生成。")
+ 
+-- 
+2.39.2
+
