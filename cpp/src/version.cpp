@@ -1,6 +1,10 @@
 #include <version.h>
 #include <base.h>
 
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
+
 namespace version {
     void version() {
         std::cout <<version::prog_name<<" version "<<version::prog_version<<std::endl;

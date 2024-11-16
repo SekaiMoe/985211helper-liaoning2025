@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include <csignal>
 #include <fcntl.h> // For open(), O_RDONLY, O_CLOEXEC
 #include <unistd.h> // For close() function
@@ -76,3 +78,4 @@ namespace projsignal {
     }
 }
 
+#endif
