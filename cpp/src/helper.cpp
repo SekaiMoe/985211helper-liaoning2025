@@ -2,7 +2,9 @@
 #include <version.h>
 
 int main(int argc, char *argv[]) {
+    #ifdef __linux__
     projsignal::register_signal();
+    #endif
 
     if (argc < 2) {
         std::cout << "Error: No inputs.\n"
