@@ -9,9 +9,6 @@
 /* Define if you have config.h */
 #undef HAVE_CONFIG_H
 
-/* define if the compiler supports basic C++17 syntax */
-#undef HAVE_CXX17
-
 /* Name of package */
 #undef PACKAGE
 
