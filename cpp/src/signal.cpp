@@ -1,5 +1,6 @@
 #ifdef __linux__
 
+#include <filesystem>
 #include <csignal>
 #include <fcntl.h> // For open(), O_RDONLY, O_CLOEXEC
 #include <unistd.h> // For close() function
@@ -12,6 +13,14 @@
 #include <ctime> // For timestamp
 
 #include <base.h>
+
+void logError(const std::string& func, const std::string& file, int line) {
+    const std::string RED = "\033[31m";
+    const std::string RESET = "\033[0m";
+    std::cerr << RED << "In " << func << "() in " << file << " line " << line << ":" << RESET << std::endl;
+}
+
+#define LOG_ERROR() logError(__func__, __FILE__, __LINE__)
 
 namespace projsignal {
     static void write_log(const char* msg) {
@@ -40,8 +49,10 @@ namespace projsignal {
 
         // 记录崩溃日志
         std::string errorMsg = "Fatal error (" + std::to_string(sig) + "), the program has been stopped.";
-        std::cout << errorMsg << std::endl;
+        LOG_ERROR();
+        //std::cout << errorMsg << std::endl;
         write_log(errorMsg.c_str());
+        std::cout << "Log file path: " << std::filesystem::current_path() << "./program_crash.log" << std::endl;
 
         // 获取调用栈
         #ifdef __GLIBC__
