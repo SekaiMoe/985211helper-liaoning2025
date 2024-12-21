@@ -50,7 +50,7 @@ namespace projsignal {
         // 记录崩溃日志
         std::string errorMsg = "Fatal error (" + std::to_string(sig) + "), the program has been stopped.";
         LOG_ERROR();
-        //std::cout << errorMsg << std::endl;
+        std::cerr << errorMsg << std::endl;
         write_log(errorMsg.c_str());
         std::cout << "Log file path: " << std::filesystem::current_path() << "./program_crash.log" << std::endl;
 
