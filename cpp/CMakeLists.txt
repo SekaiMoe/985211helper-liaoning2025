@@ -16,6 +16,9 @@ include(CheckIncludeFile)
 # add cxx standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# setup cxxflags
 add_compile_options("-Wno-unused-result")
 add_compile_options("-Wall")
 add_compile_options("-fstack-clash-protection")
