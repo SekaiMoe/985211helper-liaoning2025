@@ -168,7 +168,8 @@ namespace search {
 
             } else {
                 std::cout << "数据不足。" << std::endl;
-                exit(2);
+                std::cout << "\n这可能是因为该专业近三年来未在辽宁省招生的缘故，请谨慎考虑该专业！" << std::endl;
+                return;
             }
 
             std::cout << "\n该学校是";
@@ -185,7 +186,7 @@ namespace search {
 
         } else {
             std::cout << "没有找到匹配的大学或专业。" << std::endl;
-            exit(1);
+            exit(2);
         }
     }
     #endif
