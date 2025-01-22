@@ -154,7 +154,7 @@ namespace search {
                 int roundedAverageScore = static_cast<int>(std::ceil(averageScore));  // 向上取整
                 std::cout << "近三年平均分(向上取整):" << roundedAverageScore << std::endl;
             } else {
-                std::cout << "无法计算三年平均分，数据不足。" << std::endl;
+                std::cout << "无法计算三年平均分，原因：某一年数据不足。" << std::endl;
             }
 
             if (minScoresByYear.size() == 3) {
@@ -167,7 +167,7 @@ namespace search {
                 std::cout << "Year 2025 (仅供参考): " << predictedScore << std::endl;
 
             } else {
-                std::cout << "数据不足。" << std::endl;
+                std::cout << "无法计算2025年预测分数，原因：某一年数据不足。" << std::endl;
                 std::cout << "\n这可能是因为该专业近三年来未在辽宁省招生的缘故，请谨慎考虑该专业！" << std::endl;
                 return;
             }
