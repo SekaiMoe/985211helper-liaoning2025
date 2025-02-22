@@ -4,7 +4,7 @@
 std::map<int, int> minScoresByYear;
 
 namespace search {
-    inline double predictScore(int year1, int score1, int year2, int score2, int year3, int score3, int predictYear) {
+    /*inline double predictScore(int year1, int score1, int year2, int score2, int year3, int score3, int predictYear) {
         // 使用两两年份之间的分数变化计算斜率（delta score / delta year）
         double slope1 = (double)(score2 - score1) / (year2 - year1);
         double slope2 = (double)(score3 - score2) / (year3 - year2);
@@ -19,7 +19,34 @@ namespace search {
         // 预测 2025 年的分数
         double predictedScore = avgSlope * predictYear + intercept;
         return predictedScore;
-    }
+    }*/
+    inline double predictScore(int year1, int score1, 
+                         int year2, int score2, 
+                         int year3, int score3, 
+                         int predictYear) {
+        // 计算两个时间段的斜率，使用较新数据的权重更大
+        double slope1 = static_cast<double>(score2 - score1) / (year2 - year1); // 较早期斜率
+        double slope2 = static_cast<double>(score3 - score2) / (year3 - year2); // 最近期斜率
+
+        // 使用加权平均，给最近的变化更大的权重
+        const double weight1 = 0.4; // 较早期变化的权重
+        const double weight2 = 0.6; // 最近期变化的权重
+        double weightedSlope = slope1 * weight1 + slope2 * weight2;
+
+        // 使用最近一年的数据点计算截距，这样可以更好地反映最近的趋势
+        double intercept = score3 - weightedSlope * year3;
+
+        // 预测分数
+        double predictedScore = weightedSlope * predictYear + intercept;
+
+        // 添加合理的约束
+        const double maxYearlyChange = 15.0; // 设置每年最大分数变化
+        double maxScore = score3 + maxYearlyChange * (predictYear - year3);
+        double minScore = std::min({score1, score2, score3}) - 10.0;
+
+        // 确保预测值在合理范围内
+        return std::min(maxScore, std::max(minScore, predictedScore));
+}
     #ifdef WEBUI
     void search(const std::string& university, const std::string& profession, crow::json::wvalue& response) {
         bool found = false;
