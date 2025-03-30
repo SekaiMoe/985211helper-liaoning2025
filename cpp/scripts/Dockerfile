@@ -12,3 +12,5 @@ WORKDIR /build
 COPY --from=builder /build/out/helper .
 COPY --from=builder /build/out/metadata.json .
 CMD ["./helper", "-s"]
+
+EXPOSE 4000
