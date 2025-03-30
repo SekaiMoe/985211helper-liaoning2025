@@ -1,4 +1,4 @@
-FROM alpine:latest as builder
+FROM alpine:edge as builder
 WORKDIR /build
 COPY . .
 RUN apk add --no-cache cmake build-base samurai python3 linux-headers && \
@@ -7,7 +7,7 @@ RUN apk add --no-cache cmake build-base samurai python3 linux-headers && \
     ninja && \
     mv helper ../../out/
 
-FROM alpine:latest
+FROM alpine:edge
 WORKDIR /build
 COPY --from=builder /build/out/helper .
 COPY --from=builder /build/out/metadata.json .
