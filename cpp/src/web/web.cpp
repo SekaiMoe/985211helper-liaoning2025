@@ -227,9 +227,9 @@ namespace webui {
             std::cout << "Starting web server..." << std::endl;
             const char* filePath = "./metadata.json";
             view::view(filePath);
-            app.port(4000).multithreaded().run();
+            app.port(7860).multithreaded().run();
         } catch (const std::system_error& e) {
-            std::cerr << "Error: Failed to bind to port 8080. The port might be in use." << std::endl;
+            std::cerr << "Error: Failed to bind to port 7860. The port might be in use." << std::endl;
             std::cerr << "Details: " << e.what() << std::endl;
             exit(1);  // 正常退出程序
         }
