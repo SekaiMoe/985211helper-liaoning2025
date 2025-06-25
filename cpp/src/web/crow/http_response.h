@@ -14,12 +14,12 @@
 #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #endif
 
-#include "http_request.h"
-#include "ci_map.h"
-#include "socket_adaptors.h"
-#include "logging.h"
-#include "mime_types.h"
-#include "returnable.h"
+#include "crow/http_request.h"
+#include "crow/ci_map.h"
+#include "crow/socket_adaptors.h"
+#include "crow/logging.h"
+#include "crow/mime_types.h"
+#include "crow/returnable.h"
 
 
 namespace crow
@@ -301,7 +301,7 @@ namespace crow
 #endif
             if (file_info.statResult == 0 && S_ISREG(file_info.statbuf.st_mode))
             {
-                std::size_t last_dot = path.find_last_of(".");
+                std::size_t last_dot = path.find_last_of('.');
                 std::string extension = path.substr(last_dot + 1);
                 code = 200;
                 this->add_header("Content-Length", std::to_string(file_info.statbuf.st_size));

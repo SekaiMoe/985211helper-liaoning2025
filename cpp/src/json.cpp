@@ -242,24 +242,17 @@ Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
+#if !defined(JSON_IS_AMALGAMATION)
+#include "json_tool.h"
+#include <json/assertions.h>
+#include <json/reader.h>
+#include <json/value.h>
+#endif // if !defined(JSON_IS_AMALGAMATION)
 #include <cassert>
-#include <cstring>
-#include <istream>
-#include <sstream>
-#include <memory>
 #include <set>
 #include <utility>
 
 #include <cstdio>
-
-#include <base.h>
-#if __cplusplus >= 201103L
-
-#if !defined(sscanf)
-#define sscanf std::sscanf
-#endif
-
-#endif //__cplusplus
 
 #if defined(_MSC_VER)
 #if !defined(_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
@@ -283,11 +276,7 @@ static size_t const stackLimit_g =
 
 namespace Json {
 
-#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
 using CharReaderPtr = std::unique_ptr<CharReader>;
-#else
-using CharReaderPtr = std::auto_ptr<CharReader>;
-#endif
 
 // Implementation of class Features
 // ////////////////////////////////
@@ -2444,7 +2433,12 @@ ValueIterator& ValueIterator::operator=(const SelfType& other) {
 #include <cstddef>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <utility>
+
+#ifdef JSONCPP_HAS_STRING_VIEW
+#include <string_view>
+#endif
 
 // Provide implementation equivalent of std::snprintf for older _MSC compilers
 #if defined(_MSC_VER) && _MSC_VER < 1900
@@ -2849,6 +2843,14 @@ Value::Value(const String& value) {
       value.data(), static_cast<unsigned>(value.length()));
 }
 
+#ifdef JSONCPP_HAS_STRING_VIEW
+Value::Value(std::string_view value) {
+  initBasic(stringValue, true);
+  value_.string_ = duplicateAndPrefixStringValue(
+      value.data(), static_cast<unsigned>(value.length()));
+}
+#endif
+
 Value::Value(const StaticString& value) {
   initBasic(stringValue);
   value_.string_ = const_cast<char*>(value.c_str());
@@ -3056,6 +3058,21 @@ bool Value::getString(char const** begin, char const** end) const {
   return true;
 }
 
+#ifdef JSONCPP_HAS_STRING_VIEW
+bool Value::getString(std::string_view* str) const {
+  if (type() != stringValue)
+    return false;
+  if (value_.string_ == nullptr)
+    return false;
+  const char* begin;
+  unsigned length;
+  decodePrefixedString(this->isAllocated(), this->value_.string_, &length,
+                       &begin);
+  *str = std::string_view(begin, length);
+  return true;
+}
+#endif
+
 String Value::asString() const {
   switch (type()) {
   case nullValue:
@@ -3113,7 +3130,7 @@ Value::UInt Value::asUInt() const {
     JSON_ASSERT_MESSAGE(isUInt(), "LargestUInt out of UInt range");
     return UInt(value_.uint_);
   case realValue:
-    JSON_ASSERT_MESSAGE(InRange(value_.real_, 0, maxUInt),
+    JSON_ASSERT_MESSAGE(InRange(value_.real_, 0u, maxUInt),
                         "double out of UInt range");
     return UInt(value_.real_);
   case nullValue:
@@ -3162,7 +3179,7 @@ Value::UInt64 Value::asUInt64() const {
   case uintValue:
     return UInt64(value_.uint_);
   case realValue:
-    JSON_ASSERT_MESSAGE(InRange(value_.real_, 0, maxUInt64),
+    JSON_ASSERT_MESSAGE(InRange(value_.real_, 0u, maxUInt64),
                         "double out of UInt64 range");
     return UInt64(value_.real_);
   case nullValue:
@@ -3273,7 +3290,7 @@ bool Value::isConvertibleTo(ValueType other) const {
            type() == booleanValue || type() == nullValue;
   case uintValue:
     return isUInt() ||
-           (type() == realValue && InRange(value_.real_, 0, maxUInt)) ||
+           (type() == realValue && InRange(value_.real_, 0u, maxUInt)) ||
            type() == booleanValue || type() == nullValue;
   case realValue:
     return isNumeric() || type() == booleanValue || type() == nullValue;
@@ -3531,12 +3548,61 @@ Value const* Value::find(char const* begin, char const* end) const {
 Value const* Value::find(const String& key) const {
   return find(key.data(), key.data() + key.length());
 }
+
+Value const* Value::findNull(const String& key) const {
+  return findValue<Value, &Value::isNull>(key);
+}
+Value const* Value::findBool(const String& key) const {
+  return findValue<Value, &Value::isBool>(key);
+}
+Value const* Value::findInt(const String& key) const {
+  return findValue<Value, &Value::isInt>(key);
+}
+Value const* Value::findInt64(const String& key) const {
+  return findValue<Value, &Value::isInt64>(key);
+}
+Value const* Value::findUInt(const String& key) const {
+  return findValue<Value, &Value::isUInt>(key);
+}
+Value const* Value::findUInt64(const String& key) const {
+  return findValue<Value, &Value::isUInt64>(key);
+}
+Value const* Value::findIntegral(const String& key) const {
+  return findValue<Value, &Value::isIntegral>(key);
+}
+Value const* Value::findDouble(const String& key) const {
+  return findValue<Value, &Value::isDouble>(key);
+}
+Value const* Value::findNumeric(const String& key) const {
+  return findValue<Value, &Value::isNumeric>(key);
+}
+Value const* Value::findString(const String& key) const {
+  return findValue<Value, &Value::isString>(key);
+}
+Value const* Value::findArray(const String& key) const {
+  return findValue<Value, &Value::isArray>(key);
+}
+Value const* Value::findObject(const String& key) const {
+  return findValue<Value, &Value::isObject>(key);
+}
+
 Value* Value::demand(char const* begin, char const* end) {
   JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
                       "in Json::Value::demand(begin, end): requires "
                       "objectValue or nullValue");
   return &resolveReference(begin, end);
 }
+#ifdef JSONCPP_HAS_STRING_VIEW
+const Value& Value::operator[](std::string_view key) const {
+  Value const* found = find(key.data(), key.data() + key.length());
+  if (!found)
+    return nullSingleton();
+  return *found;
+}
+Value& Value::operator[](std::string_view key) {
+  return resolveReference(key.data(), key.data() + key.length());
+}
+#else
 const Value& Value::operator[](const char* key) const {
   Value const* found = find(key, key + strlen(key));
   if (!found)
@@ -3557,6 +3623,7 @@ Value& Value::operator[](const char* key) {
 Value& Value::operator[](const String& key) {
   return resolveReference(key.data(), key.data() + key.length());
 }
+#endif
 
 Value& Value::operator[](const StaticString& key) {
   return resolveReference(key.c_str());
@@ -3596,12 +3663,18 @@ Value Value::get(char const* begin, char const* end,
   Value const* found = find(begin, end);
   return !found ? defaultValue : *found;
 }
+#ifdef JSONCPP_HAS_STRING_VIEW
+Value Value::get(std::string_view key, const Value& defaultValue) const {
+  return get(key.data(), key.data() + key.length(), defaultValue);
+}
+#else
 Value Value::get(char const* key, Value const& defaultValue) const {
   return get(key, key + strlen(key), defaultValue);
 }
 Value Value::get(String const& key, Value const& defaultValue) const {
   return get(key.data(), key.data() + key.length(), defaultValue);
 }
+#endif
 
 bool Value::removeMember(const char* begin, const char* end, Value* removed) {
   if (type() != objectValue) {
@@ -3617,12 +3690,31 @@ bool Value::removeMember(const char* begin, const char* end, Value* removed) {
   value_.map_->erase(it);
   return true;
 }
+#ifdef JSONCPP_HAS_STRING_VIEW
+bool Value::removeMember(std::string_view key, Value* removed) {
+  return removeMember(key.data(), key.data() + key.length(), removed);
+}
+#else
 bool Value::removeMember(const char* key, Value* removed) {
   return removeMember(key, key + strlen(key), removed);
 }
 bool Value::removeMember(String const& key, Value* removed) {
   return removeMember(key.data(), key.data() + key.length(), removed);
 }
+#endif
+
+#ifdef JSONCPP_HAS_STRING_VIEW
+void Value::removeMember(std::string_view key) {
+  JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
+                      "in Json::Value::removeMember(): requires objectValue");
+  if (type() == nullValue)
+    return;
+
+  CZString actualKey(key.data(), unsigned(key.length()),
+                     CZString::noDuplication);
+  value_.map_->erase(actualKey);
+}
+#else
 void Value::removeMember(const char* key) {
   JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
                       "in Json::Value::removeMember(): requires objectValue");
@@ -3633,6 +3725,7 @@ void Value::removeMember(const char* key) {
   value_.map_->erase(actualKey);
 }
 void Value::removeMember(const String& key) { removeMember(key.c_str()); }
+#endif
 
 bool Value::removeIndex(ArrayIndex index, Value* removed) {
   if (type() != arrayValue) {
@@ -3662,12 +3755,18 @@ bool Value::isMember(char const* begin, char const* end) const {
   Value const* value = find(begin, end);
   return nullptr != value;
 }
+#ifdef JSONCPP_HAS_STRING_VIEW
+bool Value::isMember(std::string_view key) const {
+  return isMember(key.data(), key.data() + key.length());
+}
+#else
 bool Value::isMember(char const* key) const {
   return isMember(key, key + strlen(key));
 }
 bool Value::isMember(String const& key) const {
   return isMember(key.data(), key.data() + key.length());
 }
+#endif
 
 Value::Members Value::getMemberNames() const {
   JSON_ASSERT_MESSAGE(
@@ -4104,73 +4203,14 @@ Value& Path::make(Value& root) const {
 #include <algorithm>
 #include <cassert>
 #include <cctype>
+#include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <iomanip>
 #include <memory>
 #include <set>
 #include <sstream>
 #include <utility>
-
-#if __cplusplus >= 201103L
-#include <cmath>
-#include <cstdio>
-
-#if !defined(isnan)
-#define isnan std::isnan
-#endif
-
-#if !defined(isfinite)
-#define isfinite std::isfinite
-#endif
-
-#else
-#include <cmath>
-#include <cstdio>
-
-#if defined(_MSC_VER)
-#if !defined(isnan)
-#include <float.h>
-#define isnan _isnan
-#endif
-
-#if !defined(isfinite)
-#include <float.h>
-#define isfinite _finite
-#endif
-
-#if !defined(_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
-#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
-#endif //_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES
-
-#endif //_MSC_VER
-
-#if defined(__sun) && defined(__SVR4) // Solaris
-#if !defined(isfinite)
-#include <ieeefp.h>
-#define isfinite finite
-#endif
-#endif
-
-#if defined(__hpux)
-#if !defined(isfinite)
-#if defined(__ia64) && !defined(finite)
-#define isfinite(x)                                                            \
-  ((sizeof(x) == sizeof(float) ? _Isfinitef(x) : _IsFinite(x)))
-#endif
-#endif
-#endif
-
-#if !defined(isnan)
-// IEEE standard states that NaN values will not compare to themselves
-#define isnan(x) ((x) != (x))
-#endif
-
-#if !defined(__APPLE__)
-#if !defined(isfinite)
-#define isfinite finite
-#endif
-#endif
-#endif
 
 #if defined(_MSC_VER)
 // Disable warning about strdup being deprecated.
@@ -4179,11 +4219,7 @@ Value& Path::make(Value& root) const {
 
 namespace Json {
 
-#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
 using StreamWriterPtr = std::unique_ptr<StreamWriter>;
-#else
-using StreamWriterPtr = std::auto_ptr<StreamWriter>;
-#endif
 
 String valueToString(LargestInt value) {
   UIntToStringBuffer buffer;
@@ -4223,12 +4259,12 @@ String valueToString(double value, bool useSpecialFloats,
   // Print into the buffer. We need not request the alternative representation
   // that always has a decimal point because JSON doesn't distinguish the
   // concepts of reals and integers.
-  if (!isfinite(value)) {
-    static const char* const reps[2][3] = {{"NaN", "-Infinity", "Infinity"},
-                                           {"null", "-1e+9999", "1e+9999"}};
-    return reps[useSpecialFloats ? 0 : 1][isnan(value)  ? 0
-                                          : (value < 0) ? 1
-                                                        : 2];
+  if (!std::isfinite(value)) {
+    if (std::isnan(value))
+      return useSpecialFloats ? "NaN" : "null";
+    if (value < 0)
+      return useSpecialFloats ? "-Infinity" : "-1e+9999";
+    return useSpecialFloats ? "Infinity" : "1e+9999";
   }
 
   String buffer(size_t(36), '\0');

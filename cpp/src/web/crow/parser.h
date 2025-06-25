@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include "http_request.h"
-#include "http_parser_merged.h"
+#include "crow/http_request.h"
+#include "crow/http_parser_merged.h"
 
 namespace crow
 {
@@ -100,6 +100,7 @@ namespace crow
             return 0;
         }
         HTTPParser(Handler* handler):
+          http_parser(),
           handler_(handler)
         {
             http_parser_init(this);
