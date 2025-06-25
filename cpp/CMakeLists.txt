@@ -116,6 +116,10 @@ endif()
 add_definitions(-DBUILD_DATE="${CMAKE_CURRENT_DATE}")
 add_definitions(-DBUILD_TIME="${CMAKE_CURRENT_TIME}")
 
+if(WIN32)
+   add_definitions(-D__VERSION__="Microsoft Visual Studio C++ Cimpiler")
+endif()
+
 option(DEBUG_MODE "Enable debugging" OFF)
 if(DEBUG_MODE)
     message(WARNING "Warning: debug mode is enabled.")
