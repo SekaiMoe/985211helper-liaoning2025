@@ -14,7 +14,7 @@
 #endif
 #endif
 
-#include "crow/logging.h"
+#include "../crow/logging.h"
 
 namespace crow
 {
