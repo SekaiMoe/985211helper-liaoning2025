@@ -251,6 +251,7 @@ Iter fixZerosInTheEnd(Iter begin, Iter end, unsigned int precision) {
 #include <cassert>
 #include <set>
 #include <utility>
+#include <limits>
 
 #include <cstdio>
 
